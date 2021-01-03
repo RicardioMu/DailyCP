@@ -14,7 +14,7 @@ from Crypto.Cipher import AES
 
 
 class DailyCP:
-    def __init__(self, schoolName="安徽理工大学"):
+    def __init__(self, schoolName="北部湾大学"):
         self.key = "ST83=@XV"  # dynamic when app update
         self.session = requests.session()
         self.host = ""
