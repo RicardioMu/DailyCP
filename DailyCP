@@ -6,9 +6,7 @@ import time
 import re
 import pyDes
 import base64
-import uuid
-import sys
-import getopt
+import uu
 
 class DailyCP:
     def __init__(self, host="sise"):
@@ -23,7 +21,7 @@ class DailyCP:
             "Accept": "application/json, text/plain, */*",
             # "User-Agent": "okhttp/3.12.4"
         })
-        url = "https://{host}/iap/login?service=https://{host}/portal/login".format(host=self.host)
+        url = "https://{host}/iap/login?service=http://authserver.bbgu.edu.cn/authserver/login".format(host=self.host)
         ret = self.session.get(url).url
         self.client = ret[ret.find("=")+1:]
         self.session.headers.update({"Content-Type": "application/x-www-form-urlencoded"})
@@ -43,50 +41,7 @@ class DailyCP:
         return ret.decode()
 
     def checkNeedCaptcha(self, username):
-        url = "https://{host}/iap/checkNeedCaptcha?username={username}&_=".format(host=self.host,username=username)
-        ret = self.session.get(url)
-        ret = json.loads(ret.text)
-        return ret["needCaptcha"]
 
-    def generateCaptcha(self):
-        url = "https://{host}/iap/generateCaptcha?ltId={client}&codeType=2&".format(host=self.host,client=self.client)
-        ret = self.session.get(url)
-        return ret.content
-
-    def getBasicInfo(self):
-        url = "https://{host}/iap/tenant/basicInfo".format(host=self.host)
-        ret = self.session.post(url,data="{}").text
-        return json.loads(ret)
-
-    def login(self, username, password, captcha=""):
-        url = "http://authserver.bbgu.edu.cn/authserver/login".format(host=self.host)
-        self.username = username
-        body = {
-            "username": username,
-            "password": password,
-            "lt": self.client,
-            "captcha": captcha,
-            "rememberMe": "true",
-            "dllt": "",
-            "mobile": ""
-        }
-        self.session.headers["Content-Type"] = "application/x-www-form-urlencoded"
-        ret = json.loads(self.session.post(url, data=body).text)
-        if ret["resultCode"] == "REDIRECT":
-            self.session.get(ret["url"])
-            return True
-        else: return False
-
-    def getCollectorList(self):
-        body = {
-            "pageSize": 10,
-            "pageNumber": 1
-        }
-        self.session.headers["Content-Type"] = "application/json"
-        url = "https://{host}/wec-counselor-collector-apps/stu/collector/queryCollectorProcessingList".format(host=self.host)
-        ret = self.session.post(url, data=json.dumps(body))
-        ret = json.loads(ret.text)
-        return ret["datas"]["rows"]
 
     def getNoticeList(self):
         body = {
