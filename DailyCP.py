@@ -59,7 +59,7 @@ class DailyCP:
         return json.loads(ret)
 
     def login(self, username, password, captcha=""):
-        url = "https://{host}/iap/doLogin".format(host=self.host)
+        url = "http://authserver.bbgu.edu.cn/authserver/login".format(host=self.host)
         self.username = username
         body = {
             "username": username,
